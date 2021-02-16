@@ -17,6 +17,7 @@ class KmlReaderController extends Controller
         $xml=simplexml_load_file($file);
         foreach($xml->Document->Folder->Placemark as $r)
         {
+            //dd($r);
             $latlng= $r->MultiGeometry->Point->coordinates[0];
             $polygon="";
             if(isset($r->MultiGeometry->MultiGeometry->Polygon[0]->outerBoundaryIs->LinearRing->coordinates[0]))
@@ -33,10 +34,9 @@ class KmlReaderController extends Controller
 
             // koordinat terakhir harus sama dengan koordinat pertama
             $explode=explode(",",$polygon);
-            unset($explode[0]);
-            array_pop($explode);
-            $last_item=explode(" ",$explode[1]);
-            $cor_d = implode(",", $explode).', '.$last_item[0].' '.$last_item[1];
+            unset($explode[0]); //hapus array yg pertama
+            array_pop($explode); //hapus array terakhir
+            $cor_d = implode(",", $explode).', '. $explode[1];
             $insert_batch[]=[
                 'name'=>$kota[0],
                 'poly'=> \DB::Raw("ST_PolygonFromText('POLYGON(($cor_d))')"),
@@ -50,6 +50,7 @@ class KmlReaderController extends Controller
 
     function getElementByClass($string_html,$classname)
     {
+        // Disesuaikan dengan file kml. Data kml example menggunakan html, makanya menggunakan dom
         $dom_doc=new \DOMDocument();
         $dom_doc->loadHtml($string_html);
         $a = new \DOMXPath($dom_doc);
