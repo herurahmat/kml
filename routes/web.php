@@ -15,3 +15,4 @@ use App\Http\Controllers\KmlReaderController;
 */
 
 Route::get('/', [KmlReaderController::class,'index']);
+Route::get('/calculate', [KmlReaderController::class, 'coordinate_inside']);

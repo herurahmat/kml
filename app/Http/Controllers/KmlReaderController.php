@@ -48,7 +48,19 @@ class KmlReaderController extends Controller
 
     }
 
-    function getElementByClass($string_html,$classname)
+    public function coordinate_inside()
+    {
+        // Mencari lokasi yang terdekat
+        $longitude = 106.8971442;
+        $latitude = -6.2236169;
+        $data=DB::table('contoh_data')->select('name',DB::Raw("(ST_Distance_Sphere(latlng,POINT(?,?))) as distance"))
+        ->orderBy('distance','asc')
+        ->setBindings([$longitude,$latitude])
+        ->get();
+        dd($data);
+    }
+
+    private function getElementByClass($string_html,$classname)
     {
         // Disesuaikan dengan file kml. Data kml example menggunakan html, makanya menggunakan dom
         $dom_doc=new \DOMDocument();
