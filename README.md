@@ -29,7 +29,7 @@ SimpleXMLElement {#274 ▼
 
 Ini tergantung KML nya. Pada function getElementByClass ada membaca attribute class atr-value <br/>
 
-b. Ambil data kota dan koordinat. Polygon atau Point : <br/>
+b. Ambil data kota dan koordinat dan insert. Polygon atau Point : <br/>
 Polygon : <br/>
 ```php
 <?php
@@ -44,4 +44,15 @@ Point : <br/>
 $r->MultiGeometry->Point->coordinates[0]
 ?>
 ```
-
+<br/>
+3. Kalkulasi jarak yg terdekat : <br/>
+```php
+<?php
+$longitude = 106.8971442;
+$latitude = -6.2236169;
+$data=DB::table('contoh_data')->select('name',DB::Raw("(ST_Distance_Sphere(latlng,POINT(?,?))) as distance"))
+->orderBy('distance','asc')
+->setBindings([$longitude,$latitude])
+->get();
+?>
+```
