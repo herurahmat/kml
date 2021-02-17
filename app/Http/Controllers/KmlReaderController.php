@@ -17,7 +17,7 @@ class KmlReaderController extends Controller
         $xml=simplexml_load_file($file);
         foreach($xml->Document->Folder->Placemark as $r)
         {
-            //dd($r);
+            // dd($r);
             $latlng= $r->MultiGeometry->Point->coordinates[0];
             $polygon="";
             if(isset($r->MultiGeometry->MultiGeometry->Polygon[0]->outerBoundaryIs->LinearRing->coordinates[0]))
