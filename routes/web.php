@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\KmlReaderController;
+// use App\Http\Controllers\KmlReaderController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,5 +14,7 @@ use App\Http\Controllers\KmlReaderController;
 |
 */
 
-Route::get('/', [KmlReaderController::class,'index']);
+Route::get('/', 'KmlReaderController@index');
+Route::post('/upload', 'KmlReaderController@upload')->name('upload');
+Route::post('/calculate', 'KmlReaderController@calculate')->name('calculate');
 Route::get('/calculate', [KmlReaderController::class, 'coordinate_inside']);
