@@ -38,6 +38,7 @@ class KmlReaderController extends Controller
             DB::table('contoh_data')->truncate();
             $insert_batch = [];
             $file = $path_file;
+            // XML to Array
             $xml = simplexml_load_file($file);
             $json = json_encode($xml);
             $array = json_decode($json, TRUE);
@@ -45,6 +46,7 @@ class KmlReaderController extends Controller
 
             $data_place = [];
             foreach ($array['Document']['Folder'] as $place) {
+                //Jika ada data Placemark
                 if (isset($place['Placemark'])) {
                     $data_place[] = $place['Placemark'];
                 }
@@ -53,7 +55,7 @@ class KmlReaderController extends Controller
                 foreach ($data_place as $place_item) {
                     foreach ($place_item as $place_item_item) {
                         $city = $place_item_item['name'];
-
+                        //Cek jika data polygon ada
                         if (isset($place_item_item['Polygon'])) {
 
                             $poly_data = $place_item_item['Polygon']['outerBoundaryIs']['LinearRing']['coordinates'];
@@ -110,15 +112,7 @@ class KmlReaderController extends Controller
                     dd("Data All ",$data_place,"Data Insert",$insert_batch);
                 }
 
-                for($i=0;$i<count($insert_batch);$i++)
-                {
-                    try {
-                        DB::table('contoh_data')->insert($insert_batch[$i]);
-                    } catch (\Throwable $th) {
-                        dd("Line ".$i, $insert_batch[$i],$th->getMessage());
-                    }
-
-                }
+                DB::table('contoh_data')->insert($insert_batch);
 
             }
         }
@@ -126,6 +120,7 @@ class KmlReaderController extends Controller
 
     public function calculate(Request $request)
     {
+        // Contain output 0 or 1
         $longitude=$request->longitude;
         $latitude = $request->latitude;
         $data = DB::table('contoh_data')->select('name', DB::Raw("(ST_CONTAINS(poly,POINT(?,?))) as inside"))
